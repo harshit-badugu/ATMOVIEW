@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AtmoView • AQI Tracker</title>
+  <meta name="description" content="AtmoView real-time air quality tracker with an interactive world map.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+
+    <header class="topbar">
+      <button class="brand-button" id="brandButton" aria-label="Center map">
+        <span class="brand-mark">AV</span>
+        <span class="brand-copy">
+          <strong>ATMOVIEW</strong>
+          <small>AIR QUALITY TRACKER</small>
+        </span>
+      </button>
+
+      <div class="top-actions">
+        <label class="search-box">
+          <span class="search-icon">⌕</span>
+          <input id="cityInput" type="text" placeholder="SEARCH CITY / LOCATION" autocomplete="off">
+          <kbd>ENTER</kbd>
+        </label>
+        <button class="top-btn" id="searchBtn">TRACK</button>
+        <button class="round-btn" id="btnExport" title="Export data">↓</button>
+        <button class="round-btn" id="btnTheme" title="Toggle theme">◐</button>
+        <button class="round-btn" id="btnHelp" title="Help">?</button>
+      </div>
+    </header>
+
+    <main class="map-stage">
+      <div id="map" class="map"></div>
+
+      <div class="map-vignette"></div>
+      <div class="scanlines"></div>
+
+      <section class="welcome-card" id="welcomeCard">
+        <div class="eyebrow">LIVE ATMOSPHERIC INTELLIGENCE</div>
+        <h1>TRACK THE AIR.<br><span>READ THE CITY.</span></h1>
+        <p>Search a city and inspect its live AQI, pollutant levels and weather conditions.</p>
+        <div class="legend">
+          <span><i class="dot good"></i> GOOD</span>
+          <span><i class="dot moderate"></i> MODERATE</span>
+          <span><i class="dot unhealthy"></i> UNHEALTHY</span>
+          <span><i class="dot danger"></i> HAZARDOUS</span>
+        </div>
+      </section>
+
+      <div class="map-status">
+        <span class="status-dot"></span>
+        <span>MAP ONLINE</span>
+        <span class="divider">/</span>
+        <span id="mapLocation">GLOBAL VIEW</span>
+      </div>
+
+      <div class="side-panel left-panel" id="activityPanel">
+        <div class="panel-title">
+          <div>
+            <span class="panel-kicker">LOG // 01</span>
+            <h2>ACTIVITY LOG</h2>
+          </div>
+          <button class="close-btn btn-close" data-panel="activity">×</button>
+        </div>
+        <p class="panel-intro">Recent locations checked in AtmoView.</p>
+        <div id="activityLog" class="activity-log">
+          <div class="empty-log">NO SEARCHES YET</div>
+        </div>
+      </div>
+
+      <div class="side-panel right-panel" id="infoPanel">
+        <div class="panel-title">
+          <div>
+            <span class="panel-kicker">LIVE DATA // 02</span>
+            <h2>CURRENT CONDITIONS</h2>
+          </div>
+          <button class="close-btn btn-close" data-panel="info">×</button>
+        </div>
+
+        <div class="aqi-card">
+          <div class="city-line">
+            <div>
+              <span class="panel-kicker">TRACKED LOCATION</span>
+              <h3 id="cityDisplay">Hyderabad, IN</h3>
+            </div>
+            <div class="city-actions">
+              <button id="btnRefresh" class="city-action-btn" title="Refresh data">⟳</button>
+              <button id="btnFavorite" class="city-action-btn" title="Add to favorites">★</button>
+              <span class="live-pill">LIVE</span>
+            </div>
+          </div>
+          <div id="lastUpdate" class="last-update">Waiting for data…</div>
+
+          <div class="aqi-readout">
+            <div class="aqi-number" id="mainAqi">—</div>
+            <div>
+              <span class="aqi-label" id="mainLabel">SEARCH A CITY</span>
+              <small>US AQI ESTIMATE</small>
+            </div>
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric"><span>TEMPERATURE</span><strong id="tempValue">—</strong></div>
+            <div class="metric"><span>PM2.5</span><strong id="pm25Value">—</strong></div>
+            <div class="metric"><span>PM10</span><strong id="pm10Value">—</strong></div>
+            <div class="metric"><span>WIND</span><strong id="windInfo">—</strong></div>
+            <div class="metric"><span>HUMIDITY</span><strong id="humidInfo">—</strong></div>
+            <div class="metric"><span>UV INDEX</span><strong id="uvValue">—</strong></div>
+          </div>
+
+          <div class="sunrise-sunset">
+            <div class="sun-item">
+              <span>SUNRISE</span>
+              <strong id="sunriseTime">—</strong>
+            </div>
+            <div class="sun-item">
+              <span>SUNSET</span>
+              <strong id="sunsetTime">—</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="data-section">
+          <div class="section-heading"><span>POLLUTANT LEVELS</span><span>µg/m³</span></div>
+          <div id="pollutantBars" class="pollutant-bars"></div>
+        </div>
+
+        <div class="health-box">
+          <span class="panel-kicker">HEALTH GUIDANCE</span>
+          <p id="healthAdvice">Search a location to receive air-quality guidance.</p>
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <button class="nav-btn active" id="btnActivity"><span>▤</span><b>ACTIVITY</b></button>
+        <button class="nav-btn" id="btnInfo"><span>◉</span><b>LIVE AQI</b></button>
+        <button class="nav-btn" id="btnGlobal"><span>◎</span><b>GLOBAL MAP</b></button>
+        <button class="nav-btn" id="btnCenter"><span>⌖</span><b>CENTER</b></button>
+        <button class="nav-btn" id="btnSettings"><span>⚙</span><b>OPTIONS</b></button>
+      </div>
+
+      <div class="zoom-stack">
+        <button id="btnZoomIn">+</button>
+        <button id="btnZoomOut">−</button>
+      </div>
+
+      <div class="coordinates" id="coordinates">LAT — / LON —</div>
+    </main>
+
+    <footer class="footerbar">
+      <span>ATMOVIEW // REAL-TIME AIR QUALITY INTELLIGENCE</span>
+      <span>DATA: OPEN-METEO + OPENSTREETMAP</span>
+    </footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+  <script src="map.js"></script>
+</body>
+</html>
